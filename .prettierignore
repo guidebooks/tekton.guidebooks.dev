@@ -1,0 +1,8 @@
+node_modules/
+*.d.ts
+*.min.css
+package-lock.json
+dist
+playwright-report
+mdist
+plugins/*/notebooks

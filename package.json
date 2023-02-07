@@ -1,0 +1,92 @@
+{
+  "name": "madwizard.io web site",
+  "version": "0.0.13",
+  "description": "This project uses Kui to create a static single page web application.",
+  "scripts": {
+    "watch:source": "concurrently -n TYPESCRIPT,BABEL --kill-others 'tsc --build tsconfig.json --watch' 'WATCH=--watch npx kui-babel'",
+    "compile": "npx tsc --build . && npx kui-babel && npx kui-prescan",
+    "compile:clean": "tsc --build tsconfig.json --clean",
+    "build": "npm run compile && kui-build-webpack",
+    "kill": "kill $(lsof -t -i:908${PORT_OFFSET-0}) > /dev/null 2> /dev/null || true",
+    "watch:browser": "npm run kill; npx kui-prescan && kui-watch-webpack $WATCH_ARGS",
+    "watch:test": "RUNNING_KUI_TEST=true npm run watch:browser",
+    "watch": "concurrently -n WEBPACK,TYPESCRIPT --kill-others 'npm run watch:browser' 'npm run watch:source'",
+    "format": "prettier --write '**/*.{scss,css,html,js,json,md,ts,tsx}'",
+    "lint": "eslint . --ext '**/*.{js,ts,tsx}'",
+    "prepare": "husky install",
+    "postinstall": "npm run compile",
+    "test": "playwright test"
+  },
+  "keywords": [
+    "kui",
+    "webpage"
+  ],
+  "author": "@starpit",
+  "license": "Apache-2.0",
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "env": {
+      "browser": true,
+      "node": true
+    },
+    "rules": {
+      "@typescript-eslint/no-unused-vars": "error"
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+    ]
+  },
+  "eslintIgnore": [
+    "mdist",
+    "dist",
+    ".#*",
+    "*~"
+  ],
+  "lint-staged": {
+    "**/*.{scss,css,html,js,json,md,ts,tsx}": [
+      "prettier --write",
+      "git add"
+    ],
+    "**/*.{js,ts,tsx}": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "prettier": {
+    "semi": false,
+    "printWidth": 120
+  },
+  "devDependencies": {
+    "@kui-shell/builder": "^13.1.0",
+    "@kui-shell/react": "^13.1.0",
+    "@kui-shell/webpack": "^13.1.0",
+    "@playwright/test": "^1.30.0",
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/parser": "^5.50.0",
+    "eslint": "^8.33.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.0",
+    "prettier": "^2.8.3",
+    "concurrently": "^7.6.0",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "@kui-shell/client": "file:./plugins/plugin-client-offline",
+    "@kui-shell/core": "^13.1.0",
+    "@kui-shell/plugin-bash-like": "^13.1.0",
+    "@kui-shell/plugin-carbon-themes": "^13.1.0",
+    "@kui-shell/plugin-client-common": "^13.1.0",
+    "@kui-shell/plugin-core-support": "^13.1.0",
+    "@kui-shell/plugin-madwizard": "^13.1.0",
+    "@kui-shell/plugin-patternfly4-themes": "^13.1.0",
+    "@kui-shell/plugin-kubectl": "^13.1.0",
+    "@kui-shell/plugin-tekton": "./plugins/plugin-tekton",
+    "@kui-shell/plugin-wskflow": "./plugins/plugin-wskflow"
+  }
+}

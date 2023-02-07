@@ -1,0 +1,14 @@
+{
+  "extends": "../../node_modules/@kui-shell/builder/tsconfig-base.json",
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "noImplicitThis": false,
+    "composite": true,
+    "outDir": "mdist",
+    "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@kui-shell/plugin-wskflow/web/*": ["web/*"]
+    }
+  }
+}

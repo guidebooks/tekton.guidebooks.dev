@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import Debug from 'debug'
+import Debug from "debug"
 
-import type { Tab } from '@kui-shell/core'
+import type { Tab } from "@kui-shell/core"
 
-import Response from './response'
-import fsm2graph from './fsm2graph'
-import { ASTNode, ComponentBearing } from './ast'
+import Response from "./response"
+import fsm2graph from "./fsm2graph"
+import { ASTNode, ComponentBearing } from "./ast"
 
-import '../../web/css/static/wskflow.css'
+import "../../web/css/static/wskflow.css"
 
-const debug = Debug('plugins/wskflow/visualize')
+const debug = Debug("plugins/wskflow/visualize")
 
-type GraphRenderer = (ir, containerElement, acts, options, rule) => Promise<void>
+// type GraphRenderer = (ir, containerElement, acts, options, rule) => Promise<void>
 
 /**
  * Create the wskflow visualization for the given fsm
@@ -43,17 +43,17 @@ export default async (
   rule?
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<Response> => {
-  const { isHeadless } = await import('@kui-shell/core/mdist/api/Capabilities')
+  const { isHeadless } = await import("@kui-shell/core/mdist/api/Capabilities")
   if (isHeadless()) {
     return
   }
 
-  debug('visualize', passedFsm, options, rule)
+  debug("visualize", passedFsm, options, rule)
 
   // create a copy - all annotations make by wskflow will not affect the original object.
   const ir = JSON.parse(JSON.stringify(passedFsm))
-  debug('passfsm', JSON.stringify(passedFsm))
-  debug('ir', ir)
+  debug("passfsm", JSON.stringify(passedFsm))
+  debug("ir", ir)
 
   return fsm2graph(tab, ir, container, activations, options, rule)
 }

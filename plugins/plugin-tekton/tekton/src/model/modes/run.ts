@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-import { Mode, Tab } from '@kui-shell/core'
-import { isKubeResource } from '@kui-shell/plugin-kubectl'
-import { ResponseObject } from './flow'
+import { Mode, Tab } from "@kui-shell/core"
+import { isKubeResource } from "@kui-shell/plugin-kubectl"
+import { ResponseObject } from "./flow"
 
 /**
  * The sidecar mode for the tekton flow visualization
  *
  */
 const mode: Mode = {
-  mode: 'Run Config',
+  mode: "Run Config",
   content: async (tab: Tab, _: ResponseObject) => {
     if (!isKubeResource(_)) {
-      const { dump } = await import('js-yaml')
+      const { dump } = await import("js-yaml")
 
       // then _ is already the response we need
-      const models = _.model.filter(_ => _.kind === 'PipelineRun' || _.kind === 'TaskRun')
+      const models = _.model.filter((_) => _.kind === "PipelineRun" || _.kind === "TaskRun")
       const model = models.length === 1 && models[0]
       return Object.assign(
         {
-          type: 'custom',
+          type: "custom",
           isEntity: true,
-          contentType: 'yaml',
+          contentType: "yaml",
           resource: model || models,
-          content: dump(model || models)
+          content: dump(model || models),
         },
         model || {}
       )
     }
-  }
+  },
 }
 
 export default mode

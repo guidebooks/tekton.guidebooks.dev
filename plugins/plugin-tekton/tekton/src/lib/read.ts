@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import Debug from 'debug'
-import { Tab } from '@kui-shell/core'
-import { KubeResource, fetchFileString } from '@kui-shell/plugin-kubectl'
-import { Task, isTask } from '../model/resource'
+import Debug from "debug"
+import { Tab } from "@kui-shell/core"
+import { KubeResource, fetchFileString } from "@kui-shell/plugin-kubectl"
+import { Task, isTask } from "../model/resource"
 
-const debug = Debug('plugins/tekton/lib/read')
+const debug = Debug("plugins/tekton/lib/read")
 
 const knownKinds = /PipelineResource|Pipeline|Task/
 
@@ -28,8 +28,8 @@ const knownKinds = /PipelineResource|Pipeline|Task/
  *
  */
 export const parse = async (raw: string | PromiseLike<string>): Promise<KubeResource[]> => {
-  const { loadAll } = await import('js-yaml')
-  return loadAll(await raw).filter(_ => knownKinds.test(_.kind))
+  const { loadAll } = await import("js-yaml")
+  return loadAll(await raw).filter((_) => knownKinds.test(_.kind))
 }
 
 /**
@@ -53,26 +53,26 @@ export const fetchTask = async (tab: Tab, pipelineName: string, taskName: string
   if (filepath) {
     const model: KubeResource[] = await parse(read(tab, filepath))
     const task = taskName
-      ? model.find(_ => isTask(_) && _.metadata.name === taskName)
-      : model.filter(_ => _.kind === 'Task')
+      ? model.find((_) => isTask(_) && _.metadata.name === taskName)
+      : model.filter((_) => _.kind === "Task")
     return task as Task
   } else if (!taskName) {
     const pipeline = await tab.REPL.pexec<KubeResource>(
       `kubectl get Pipeline ${tab.REPL.encodeComponent(pipelineName)}`
-    ).catch(err => {
+    ).catch((err) => {
       // want Pipeline.tekton.dev but that is much slower
-      debug('got error fetching pipeline', err)
+      debug("got error fetching pipeline", err)
       return { spec: { tasks: [] } }
     })
     const referencedTasks: Record<string, boolean> = pipeline.spec.tasks.reduce((M, _) => {
       M[_.taskRef.name] = true
       return M
     }, {})
-    debug('referencedTasks', referencedTasks)
+    debug("referencedTasks", referencedTasks)
 
     return tab.REPL.qexec(`kubectl get Task`, undefined, undefined, {
       // want Task.tekton.dev but that is much sloewr
-      filter: listOfTasks => listOfTasks.filter(_ => referencedTasks[_.name])
+      filter: (listOfTasks) => listOfTasks.filter((_) => referencedTasks[_.name]),
     })
   } else {
     return tab.REPL.pexec(`kubectl get Task ${tab.REPL.encodeComponent(taskName)}`) // want Task.tekton.dev but that is much slower

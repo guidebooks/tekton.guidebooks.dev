@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { KubeResource, KubeStatusCondition, KubeStatus } from '@kui-shell/plugin-kubectl'
+import { KubeResource, KubeStatusCondition, KubeStatus } from "@kui-shell/plugin-kubectl"
 
 /** this is the api version matcher; TODO refactor */
 const tektonAPI = /tekton.dev/
@@ -87,7 +87,7 @@ interface Resource {
 }
 
 export interface Task extends TektonKubeResource {
-  kind: 'Task'
+  kind: "Task"
   visitedIdx?: number
   spec: {
     inputs: {
@@ -99,11 +99,11 @@ export interface Task extends TektonKubeResource {
 }
 
 export function isTask(resource: KubeResource): resource is Task {
-  return resource && tektonAPI.test(resource.apiVersion) && resource.kind === 'Task'
+  return resource && tektonAPI.test(resource.apiVersion) && resource.kind === "Task"
 }
 
 export interface Pipeline extends TektonKubeResource {
-  kind: 'Pipeline'
+  kind: "Pipeline"
   spec: {
     resources?: Resource[]
     tasks: TaskRef[]
@@ -115,19 +115,19 @@ export function isPipeline(resource: KubeResource): resource is Pipeline {
     run &&
     tektonAPI.test(run.apiVersion) &&
     run.spec !== undefined &&
-    run.kind === 'Pipeline' &&
+    run.kind === "Pipeline" &&
     run.spec.tasks !== undefined
   )
 }
 
 export interface PipelineRun extends TektonKubeResource {
-  kind: 'PipelineRun'
+  kind: "PipelineRun"
   spec: {
     serviceAccount: string
     params: { name: string; value: string }[]
     resources: { name: string; resourceRef: { name: string } }[]
     pipelineRef: { name: string }
-    trigger: { type: 'manual' }
+    trigger: { type: "manual" }
   }
   status: KubeStatus & {
     taskRuns: TaskRuns
@@ -139,7 +139,7 @@ export function isPipelineRun(resource: KubeResource): resource is PipelineRun {
   return (
     tektonAPI.test(run.apiVersion) &&
     run.spec !== undefined &&
-    run.kind === 'PipelineRun' &&
+    run.kind === "PipelineRun" &&
     run.spec.serviceAccount !== undefined &&
     run.spec.pipelineRef !== undefined
   )

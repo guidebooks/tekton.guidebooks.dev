@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import Debug from 'debug'
-import prettyPrintDuration from 'pretty-ms'
+import Debug from "debug"
+import prettyPrintDuration from "pretty-ms"
 
-import { KubeResource } from '@kui-shell/plugin-kubectl'
-import { Badge, Mode, Tab, empty, Util, i18n } from '@kui-shell/core'
-import { ActivationLikeFull as ActivationLike } from '@kui-shell/plugin-wskflow'
+import { KubeResource } from "@kui-shell/plugin-kubectl"
+import { Badge, Mode, Tab, empty, Util, i18n } from "@kui-shell/core"
+import { ActivationLikeFull as ActivationLike } from "@kui-shell/plugin-wskflow"
 
-import success from '../../lib/success'
-import { getPipelineFromRef, getTasks } from '../fetch'
-import { Pipeline, PipelineRun, Task, TaskRef } from '../resource'
+import success from "../../lib/success"
+import { getPipelineFromRef, getTasks } from "../fetch"
+import { Pipeline, PipelineRun, Task, TaskRef } from "../resource"
 
-const strings = i18n('plugin-kubectl', 'tekton')
-const debug = Debug('plugins/tekton/models/modes/trace')
+const strings = i18n("plugin-kubectl", "tekton")
+const debug = Debug("plugins/tekton/models/modes/trace")
 
 interface RenderOpts {
   noPip?: boolean
@@ -42,17 +42,17 @@ interface RenderOpts {
 export const render = (tab: Tab, activations: ActivationLike[], container: Element, opts: RenderOpts = {}): void => {
   const { noCrop = false, showStart = false, showTimeline = true } = opts
 
-  debug('trace', activations)
+  debug("trace", activations)
 
   // add a legned
   const legendHTMLtext = `<div class='legend-stripe'><div class='legend-entry' data-legend-type='queueing-delays' data-balloon='The time this activation waited for free execution resources' data-balloon-pos='left'>Queueing Delays<div class='legend-icon is-waitTime'></div></div><div class='legend-entry' data-legend-type='container-initialization' data-balloon='The "cold start time", i.e. time spent initializing a container' data-balloon-pos='left'>Container Initialization<div class='legend-icon is-initTime'></div></div><div class='legend-entry' data-legend-type='execution-time' data-balloon='The time this activation spent executing your code' data-balloon-pos='left'>Execution Time<div class='legend-icon is-runTime'></div></div><div class='legend-entry' data-legend-type='failures' data-balloon='The activation failed to complete' data-balloon-pos='left'>Failures<div class='legend-icon is-success-false'></div></div></div>`
-  const legend = document.createElement('div')
+  const legend = document.createElement("div")
   container.appendChild(legend)
-  legend.className = 'legend-trace legend-list'
+  legend.className = "legend-trace legend-list"
   legend.innerHTML = legendHTMLtext
 
-  const logTable = document.createElement('table')
-  logTable.className = 'log-lines log-lines-loose'
+  const logTable = document.createElement("table")
+  logTable.className = "log-lines log-lines-loose"
   container.appendChild(logTable)
 
   // duration of the activation. this will be helpful for
@@ -106,29 +106,29 @@ export const render = (tab: Tab, activations: ActivationLike[], container: Eleme
 
     // row dom
     const line = logTable.insertRow(-1)
-    line.className = 'log-line entity'
-    line.classList.add('activation')
-    line.setAttribute('data-name', activation.name)
-    if (idx === 0) line.classList.add('log-line-root')
+    line.className = "log-line entity"
+    line.classList.add("activation")
+    line.setAttribute("data-name", activation.name)
+    if (idx === 0) line.classList.add("log-line-root")
 
     const nextCell = () => line.insertCell(-1)
 
     // column 1: activationId cell
     const id = nextCell()
-    const clicky = document.createElement('span') as HTMLElement
-    clicky.className = 'clickable'
+    const clicky = document.createElement("span") as HTMLElement
+    clicky.className = "clickable"
     id.appendChild(clicky)
-    id.className = 'log-field'
-    if (noCrop) id.classList.add('full-width')
+    id.className = "log-field"
+    if (noCrop) id.classList.add("full-width")
     clicky.innerText = activation.activationId
-    id.setAttribute('data-activation-id', id.innerText)
+    id.setAttribute("data-activation-id", id.innerText)
     // clicky.onclick = pip(show(activation))
 
     // column 2: name cell
     const name = nextCell()
-    const nameClick = document.createElement('span') as HTMLElement
-    name.className = 'slightly-deemphasize log-field entity-name'
-    nameClick.className = 'clickable'
+    const nameClick = document.createElement("span") as HTMLElement
+    name.className = "slightly-deemphasize log-field entity-name"
+    nameClick.className = "clickable"
     nameClick.innerText = activation.name
     name.appendChild(nameClick)
 
@@ -142,8 +142,8 @@ export const render = (tab: Tab, activations: ActivationLike[], container: Eleme
 
     // column 3: duration cell
     const duration = nextCell()
-    duration.className = 'somewhat-smaller-text log-field log-field-right-align duration-field'
-    duration.classList.add(isSuccess ? 'green-text' : 'red-text')
+    duration.className = "somewhat-smaller-text log-field log-field-right-align duration-field"
+    duration.classList.add(isSuccess ? "green-text" : "red-text")
     if (activation.end) {
       duration.innerText = prettyPrintDuration(activation.end - activation.start)
     } else {
@@ -171,46 +171,46 @@ export const render = (tab: Tab, activations: ActivationLike[], container: Eleme
 
       const isRootBar = idx === 0
 
-      timeline.className = 'log-field log-line-bar-field'
+      timeline.className = "log-field log-line-bar-field"
 
       // execution time bar
-      const bar = document.createElement('div') as HTMLElement
-      bar.style.position = 'absolute'
-      bar.classList.add('log-line-bar')
+      const bar = document.createElement("div") as HTMLElement
+      bar.style.position = "absolute"
+      bar.classList.add("log-line-bar")
       bar.classList.add(`is-success-${isSuccess}`)
       const left = normalize(activation.start + initTime, idx)
       const right = normalize(idx === 0 ? maxEnd : activation.end || activation.start + initTime + 1, idx) // handle rules and triggers as having dur=1
       const width = right - left
 
       // on which side should we render the tooltip?
-      const balloonPos = right > 0.9 ? 'left' : 'right'
+      const balloonPos = right > 0.9 ? "left" : "right"
 
-      bar.style.left = 100 * left + '%'
-      bar.style.width = 100 * width + '%'
+      bar.style.left = 100 * left + "%"
+      bar.style.width = 100 * width + "%"
       // bar.onclick = pip(show(activation))
       bar.setAttribute(
-        'data-balloon',
+        "data-balloon",
         prettyPrintDuration(activation.end ? activation.end - activation.start - initTime : initTime)
       )
-      bar.setAttribute('data-balloon-pos', balloonPos)
-      bar.onmouseover = () => legend.setAttribute('data-hover-type', isSuccess ? 'execution-time' : 'failures')
-      bar.onmouseout = () => legend.removeAttribute('data-hover-type')
+      bar.setAttribute("data-balloon-pos", balloonPos)
+      bar.onmouseover = () => legend.setAttribute("data-hover-type", isSuccess ? "execution-time" : "failures")
+      bar.onmouseout = () => legend.removeAttribute("data-hover-type")
 
       // container initialization bar
       let initTimeBar
       let waitTimeBar
       if (initTime > 0 && !isRootBar) {
-        initTimeBar = document.createElement('div')
+        initTimeBar = document.createElement("div")
         const l = normalize(activation.start, idx)
         const w = normalize(activation.start + initTime, idx) - l
 
-        initTimeBar.style.left = 100 * l + '%'
-        initTimeBar.style.width = 100 * w + '%'
-        initTimeBar.style.position = 'absolute'
-        initTimeBar.classList.add('log-line-bar')
-        initTimeBar.classList.add('is-initTime')
-        initTimeBar.onmouseover = () => legend.setAttribute('data-hover-type', 'container-initialization')
-        initTimeBar.onmouseout = () => legend.removeAttribute('data-hover-type')
+        initTimeBar.style.left = 100 * l + "%"
+        initTimeBar.style.width = 100 * w + "%"
+        initTimeBar.style.position = "absolute"
+        initTimeBar.classList.add("log-line-bar")
+        initTimeBar.classList.add("is-initTime")
+        initTimeBar.onmouseover = () => legend.setAttribute("data-hover-type", "container-initialization")
+        initTimeBar.onmouseout = () => legend.removeAttribute("data-hover-type")
 
         // activation can fail at init time - if that's the case, initTime === duration
         if (initTime === activation.duration) {
@@ -220,31 +220,31 @@ export const render = (tab: Tab, activations: ActivationLike[], container: Eleme
         }
 
         // initTimeBar.onclick = pip(show(activation))
-        initTimeBar.setAttribute('data-balloon', prettyPrintDuration(initTime))
-        initTimeBar.setAttribute('data-balloon-pos', balloonPos)
+        initTimeBar.setAttribute("data-balloon", prettyPrintDuration(initTime))
+        initTimeBar.setAttribute("data-balloon-pos", balloonPos)
       }
 
       // queueing delays bar
       if (waitTime > 0 && !isRootBar) {
-        waitTimeBar = document.createElement('div')
+        waitTimeBar = document.createElement("div")
         const l = normalize(activation.start - waitTime, idx)
         const w = normalize(activation.start, idx) - l
 
-        waitTimeBar.style.left = 100 * l + '%'
-        waitTimeBar.style.width = 100 * w + '%'
-        waitTimeBar.style.position = 'absolute'
-        waitTimeBar.classList.add('log-line-bar')
-        waitTimeBar.classList.add('is-waitTime')
+        waitTimeBar.style.left = 100 * l + "%"
+        waitTimeBar.style.width = 100 * w + "%"
+        waitTimeBar.style.position = "absolute"
+        waitTimeBar.classList.add("log-line-bar")
+        waitTimeBar.classList.add("is-waitTime")
         // waitTimeBar.onclick = pip(show(activation))
-        waitTimeBar.setAttribute('data-balloon', prettyPrintDuration(waitTime))
-        waitTimeBar.setAttribute('data-balloon-pos', balloonPos)
-        waitTimeBar.onmouseover = () => legend.setAttribute('data-hover-type', 'queueing-delays')
-        waitTimeBar.onmouseout = () => legend.removeAttribute('data-hover-type')
+        waitTimeBar.setAttribute("data-balloon", prettyPrintDuration(waitTime))
+        waitTimeBar.setAttribute("data-balloon-pos", balloonPos)
+        waitTimeBar.onmouseover = () => legend.setAttribute("data-hover-type", "queueing-delays")
+        waitTimeBar.onmouseout = () => legend.removeAttribute("data-hover-type")
       }
 
       // here, we have to be careful to stack the bars in an order so that the tooltips will stack on top
       // see shell issue #168
-      if (balloonPos === 'right') {
+      if (balloonPos === "right") {
         timeline.appendChild(bar)
         if (initTimeBar) timeline.appendChild(initTimeBar)
         if (waitTimeBar) timeline.appendChild(waitTimeBar)
@@ -258,15 +258,15 @@ export const render = (tab: Tab, activations: ActivationLike[], container: Eleme
     // column n: start cell
     if (showStart) {
       const start = nextCell()
-      const startInner = document.createElement('span') as HTMLElement
+      const startInner = document.createElement("span") as HTMLElement
       const previous = activations[idx - 1]
       const previousWaitTime = 0
       const previousStart = previous && previous.start - previousWaitTime
-      const time = Util.prettyPrintTime(activation.start - waitTime, 'short', previousStart)
+      const time = Util.prettyPrintTime(activation.start - waitTime, "short", previousStart)
       start.className =
-        'somewhat-smaller-text lighter-text log-field log-field-right-align start-time-field timestamp-like'
+        "somewhat-smaller-text lighter-text log-field log-field-right-align start-time-field timestamp-like"
       start.appendChild(startInner)
-      if (typeof time === 'string') {
+      if (typeof time === "string") {
         startInner.innerText = time
       } else {
         empty(startInner)
@@ -288,8 +288,8 @@ function makeRunActivationLike(run: PipelineRun): ActivationLike {
     end: end && end.getTime(),
     duration,
     response: {
-      success: success(run.status.conditions)
-    }
+      success: success(run.status.conditions),
+    },
   }
 }
 
@@ -300,7 +300,7 @@ interface SymbolTable<N> {
 function makeSymbolTables(pipeline: Pipeline, jsons: KubeResource[]) {
   // map from Task.metadata.name to Task
   const taskName2Task: SymbolTable<Task> = jsons
-    .filter(_ => _.kind === 'Task')
+    .filter((_) => _.kind === "Task")
     .reduce((symtab: SymbolTable<Task>, task: Task) => {
       symtab[task.metadata.name] = task
       return symtab
@@ -329,7 +329,7 @@ function makeTaskRunsActivationLike(run: PipelineRun, pipeline: Pipeline, jsons:
     const task = taskRefName2Task[taskRefName]
 
     if (!task) {
-      console.error('!! task not found', taskRefName, taskRefName2Task)
+      console.error("!! task not found", taskRefName, taskRefName2Task)
     } else {
       /* const start = new Date(taskRun.status.startTime).getTime()
 
@@ -342,10 +342,10 @@ function makeTaskRunsActivationLike(run: PipelineRun, pipeline: Pipeline, jsons:
         }
       }) */
 
-      taskRun.status.steps.forEach(stepRun => {
+      taskRun.status.steps.forEach((stepRun) => {
         const start = new Date(stepRun.terminated.startedAt).getTime()
         const end = new Date(stepRun.terminated.finishedAt).getTime()
-        const success = stepRun.terminated.reason !== 'Error'
+        const success = stepRun.terminated.reason !== "Error"
 
         /* const step = task.spec.steps.find(_ => _.name === stepRun.name)
         if (!step) {
@@ -361,8 +361,8 @@ function makeTaskRunsActivationLike(run: PipelineRun, pipeline: Pipeline, jsons:
           end,
           duration: end - start,
           response: {
-            success
-          }
+            success,
+          },
         })
       })
     }
@@ -375,27 +375,27 @@ function makeTaskRunsActivationLike(run: PipelineRun, pipeline: Pipeline, jsons:
 }
 
 export const traceView = (tab: Tab, run: PipelineRun, pipeline: Pipeline, jsons: KubeResource[]) => {
-  const content = document.createElement('div')
-  content.classList.add('padding-content', 'repl-result')
-  content.style.flex = '1'
-  content.style.display = 'flex'
-  content.style.flexDirection = 'column'
-  content.style.overflowX = 'hidden'
+  const content = document.createElement("div")
+  content.classList.add("padding-content", "repl-result")
+  content.style.flex = "1"
+  content.style.display = "flex"
+  content.style.flexDirection = "column"
+  content.style.overflowX = "hidden"
 
   const runActivation = makeRunActivationLike(run)
   render(tab, [runActivation].concat(makeTaskRunsActivationLike(run, pipeline, jsons)), content)
 
-  const badges: Badge[] = ['Tekton']
+  const badges: Badge[] = ["Tekton"]
 
   return {
-    type: 'custom',
+    type: "custom",
     isEntity: true,
     name: run.metadata.name,
     packageName: run.metadata.namespace,
-    prettyType: 'PipelineRun',
+    prettyType: "PipelineRun",
     duration: runActivation.duration,
     badges,
-    content
+    content,
   }
 }
 
@@ -404,13 +404,13 @@ export const traceView = (tab: Tab, run: PipelineRun, pipeline: Pipeline, jsons:
  *
  */
 const traceMode: Mode = {
-  mode: 'trace',
-  label: strings('trace'),
+  mode: "trace",
+  label: strings("trace"),
   content: async (tab: Tab, resource: PipelineRun) => {
     const [pipeline, tasks] = await Promise.all([getPipelineFromRef(tab, resource), getTasks(tab)])
     return traceView(tab, resource, pipeline, tasks)
   },
-  defaultMode: true
+  defaultMode: true,
 }
 
 export default traceMode

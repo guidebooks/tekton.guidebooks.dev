@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-import { Registrar, Tab } from '@kui-shell/core'
+import { Registrar, Tab } from "@kui-shell/core"
 
-import flowView from '../view/flow'
-import { parse, read } from '../lib/read'
+import flowView from "../view/flow"
+import { parse, read } from "../lib/read"
 
 const usage = {
-  command: 'flow',
-  strict: 'flow',
-  docs: 'Preview a Tekton pipeline',
+  command: "flow",
+  strict: "flow",
+  docs: "Preview a Tekton pipeline",
   required: [
     {
-      name: 'pipeline.yml',
+      name: "pipeline.yml",
       file: true,
-      docs: 'path to a pipeline description file'
-    }
-  ]
+      docs: "path to a pipeline description file",
+    },
+  ],
 }
 
 export async function parseAndView(tab: Tab, raw: string, filepath?: string) {
@@ -52,9 +52,9 @@ export async function fetchParseAndView(tab: Tab, filepath: string) {
  */
 export default (commandTree: Registrar) => {
   commandTree.listen(
-    '/tekton/flow',
+    "/tekton/flow",
     async ({ argvNoOptions, tab }) => {
-      const filepath = argvNoOptions[argvNoOptions.indexOf('flow') + 1]
+      const filepath = argvNoOptions[argvNoOptions.indexOf("flow") + 1]
       return fetchParseAndView(tab, filepath)
     },
     { usage }

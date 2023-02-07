@@ -4,9 +4,7 @@
     { "notebook": "Welcome", "filepath": "/kui/client/welcome.md" },
     {
       "label": "Playgrounds",
-      "submenu": [
-        { "notebook": "Visualize a Pipeline", "filepath": "/kui/client/playground.md" }
-      ]
+      "submenu": [{ "notebook": "Visualize a Pipeline", "filepath": "/kui/client/playground.md" }]
     }
   ]
 }

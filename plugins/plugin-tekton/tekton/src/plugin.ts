@@ -14,29 +14,27 @@
  * limitations under the License.
  */
 
-import { Capabilities, Registrar } from '@kui-shell/core'
+import { Capabilities, Registrar } from "@kui-shell/core"
 
-import getStep from './controller/get/step'
-import getTask from './controller/get/task'
-import preview from './controller/preview'
+import getStep from "./controller/get/step"
+import getTask from "./controller/get/task"
+import preview from "./controller/preview"
 
 export default async (registrar: Registrar) => {
-      /**
-       * Playground that listens for edits on the provided channel
-       *    madwizard playground <channel>
-       *
-       */
-    registrar.listen(
-      '/tekton/playground',
-      async args => import('./view/Playground').then(async _ => ({ react: await _.listenOnChannel(args) })),
-      {
-        needsUI: true
-      }
+  /**
+   * Playground that listens for edits on the provided channel
+   *    madwizard playground <channel>
+   *
+   */
+  registrar.listen(
+    "/tekton/playground",
+    async (args) => import("./view/Playground").then(async (_) => ({ react: await _.listenOnChannel(args) })),
+    {
+      needsUI: true,
+    }
   )
 
   if (!Capabilities.isHeadless() || Capabilities.inProxy()) {
     await Promise.all([getStep(registrar), getTask(registrar), preview(registrar)])
-
   }
-
 }

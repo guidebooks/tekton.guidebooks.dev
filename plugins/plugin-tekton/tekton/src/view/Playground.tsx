@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-import { PureComponent } from 'react'
-import { KubeResource } from "@kui-shell/plugin-kubectl"
-import type { Arguments, KResponse, ParsedOptions, Tab } from '@kui-shell/core'
-import { Loading, onCommentaryEdit, offCommentaryEdit } from '@kui-shell/plugin-client-common'
+import { PureComponent } from "react"
+import type { Arguments, ParsedOptions, Tab } from "@kui-shell/core"
+import { Loading, onCommentaryEdit, offCommentaryEdit } from "@kui-shell/plugin-client-common"
 
-import { parse } from '../lib/read'
-import tekton2graph from '../lib/tekton2graph'
+import { parse } from "../lib/read"
+import tekton2graph from "../lib/tekton2graph"
 
 type Channel = string
 type Source = {
@@ -40,17 +39,17 @@ export type Props = {
   tab: Tab
 }
 
-function isChannel(source: Props['source']): source is Channel {
-  return typeof source === 'string'
+function isChannel(source: Props["source"]): source is Channel {
+  return typeof source === "string"
 }
 
 /** <Playground/> react state */
 type State = Source & {
-    /** Error in madwizard? */
-    internalError?: Error,
+  /** Error in madwizard? */
+  internalError?: Error
 
-    content?: HTMLElement
-  }
+  content?: HTMLElement
+}
 
 export default class Playground extends PureComponent<Props, State> {
   public constructor(props: Props) {
@@ -67,30 +66,30 @@ export default class Playground extends PureComponent<Props, State> {
   private readonly _onEdit = async (source: string, filepath?: string) => {
     this.setState({ input: source, filepath })
   }
-  
+
   private get REPL() {
     return this.props.tab.REPL
   }
 
-  private async parse(raw: string, filepath = '') {
+  private async parse(raw: string, filepath = "") {
     try {
-    const jsons = await parse(raw)
-    const [graph] = await Promise.all([
-      tekton2graph(jsons, filepath/*, run*/) // generate the graph model
-    ])
-    
-    const { graph2doms, zoomToFitButtons } = await import('@kui-shell/plugin-wskflow')
+      const jsons = await parse(raw)
+      const [graph] = await Promise.all([
+        tekton2graph(jsons, filepath /*, run*/), // generate the graph model
+      ])
 
-    const content = document.createElement('div')
-    const { view, controller } = await graph2doms(this.props.tab, graph, content, graph.runs, {
-    layoutOptions: {
-      'elk.separateConnectedComponents': false,
-      'elk.spacing.nodeNode': 10,
-      'elk.padding': '[top=10,left=7.5,bottom=10,right=7.5]',
-      hierarchyHandling: 'INCLUDE_CHILDREN' // since we have hierarhical edges, i.e. that cross-cut subgraphs
-    }
-  })
-    
+      const { graph2doms /*, zoomToFitButtons*/ } = await import("@kui-shell/plugin-wskflow")
+
+      const content = document.createElement("div")
+      /* const { view, controller } = */ await graph2doms(this.props.tab, graph, content, graph.runs, {
+        layoutOptions: {
+          "elk.separateConnectedComponents": false,
+          "elk.spacing.nodeNode": 10,
+          "elk.padding": "[top=10,left=7.5,bottom=10,right=7.5]",
+          hierarchyHandling: "INCLUDE_CHILDREN", // since we have hierarhical edges, i.e. that cross-cut subgraphs
+        },
+      })
+
       this.setState({ content })
     } catch (err) {
       console.error(err)
@@ -98,13 +97,12 @@ export default class Playground extends PureComponent<Props, State> {
     }
   }
 
- 
   public componentDidUpdate(prevProps: Props, prevState: State) {
-    if (this.state?.input && (prevState?.input !== this.state.input)) {
+    if (this.state?.input && prevState?.input !== this.state.input) {
       this.parse(this.state.input)
     }
   }
-  
+
   public componentDidMount() {
     if (isChannel(this.props.source)) {
       // we don't have the markdown source yet, so listen on the given
@@ -121,12 +119,17 @@ export default class Playground extends PureComponent<Props, State> {
 
   public render() {
     if (this.state?.internalError) {
-      return 'Internal Error'
+      return "Internal Error"
     } else if (!this.state?.content) {
-      return <Loading/>
+      return <Loading />
     }
 
-    return <div className="padding-content flex-layout flex-fill" dangerouslySetInnerHTML={{__html: this.state.content.innerHTML}}/>
+    return (
+      <div
+        className="padding-content flex-layout flex-fill"
+        dangerouslySetInnerHTML={{ __html: this.state.content.innerHTML }}
+      />
+    )
   }
 }
 
@@ -136,7 +139,7 @@ type Options = ParsedOptions
 export function listenOnChannel(args: Arguments<Options>) {
   const channel = args.argvNoOptions[2]
   if (!channel) {
-    throw new Error('Usage: madwizard playground <channel>')
+    throw new Error("Usage: madwizard playground <channel>")
   }
 
   return <Playground source={channel} tab={args.tab} />

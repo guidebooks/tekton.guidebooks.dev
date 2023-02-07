@@ -14,88 +14,90 @@
  * limitations under the License.
  */
 
-import { Row, Table, Mode, Tab, Util, i18n } from '@kui-shell/core'
-import { KubeItems, KubeStatus, Pod } from '@kui-shell/plugin-kubectl'
-import { PipelineRun, TaskRun } from '../resource'
+import { Row, Table, Mode, Tab, Util, i18n } from "@kui-shell/core"
+import { KubeItems, KubeStatus, Pod } from "@kui-shell/plugin-kubectl"
+import { PipelineRun, TaskRun } from "../resource"
 
-const strings = i18n('plugin-kubectl', 'tekton')
+const strings = i18n("plugin-kubectl", "tekton")
 
 /**
  * The sidecar mode for the tekton logs of a PipelineRun
  *
  */
 const mode: Mode = {
-  mode: 'Logs',
-  label: strings('logs'),
+  mode: "Logs",
+  label: strings("logs"),
   content: async (tab: Tab, run: PipelineRun) => {
     const [{ items: taskRuns }, { items: pods }] = await Promise.all([
-      tab.REPL.qexec<KubeItems<KubeStatus, TaskRun>>(`kubectl get taskrun -l tekton.dev/pipelineRun=${run.metadata.name} -o json`),
+      tab.REPL.qexec<KubeItems<KubeStatus, TaskRun>>(
+        `kubectl get taskrun -l tekton.dev/pipelineRun=${run.metadata.name} -o json`
+      ),
       tab.REPL.qexec<KubeItems<KubeStatus, Pod>>(
         `kubectl get pods -n ${run.metadata.namespace} -l tekton.dev/pipelineRun=${run.metadata.name} -o json`
-      )
+      ),
     ])
 
     const containers: Row[] = Util.flatten(
-      pods.map(pod => {
-        const taskName = pod.metadata.labels['tekton.dev/task']
-        const taskRun = taskRuns.find(_ => _.metadata.labels['tekton.dev/task'] === taskName)
+      pods.map((pod) => {
+        const taskName = pod.metadata.labels["tekton.dev/task"]
+        const taskRun = taskRuns.find((_) => _.metadata.labels["tekton.dev/task"] === taskName)
 
         return pod.spec.containers.map((container, idx) => {
           const { containerID } = pod.status.containerStatuses[idx]
-          const stepRun = taskRun.status.steps.find(_ => _.terminated.containerID === containerID)
+          const stepRun = taskRun.status.steps.find((_) => _.terminated.containerID === containerID)
           const status = stepRun && stepRun.terminated.reason
 
           return {
             name: taskName,
-            css: 'slightly-deemphasize',
+            css: "slightly-deemphasize",
             onclick: `kubectl get task ${taskName} -o yaml`,
             attributes: [
               {
-                key: 'STEP',
-                value: container.name
+                key: "STEP",
+                value: container.name,
               },
               {
-                key: 'STATUS',
+                key: "STATUS",
                 value: status,
-                tag: 'badge'
+                tag: "badge",
                 // css: cssForValue[status]
               },
               {
-                key: 'ACTIONS',
-                value: 'View Logs',
-                outerCSS: 'clickable clickable-color',
-                onclick: `kubectl logs ${pod.metadata.name} ${container.name} -n ${pod.metadata.namespace}`
-              }
-            ]
+                key: "ACTIONS",
+                value: "View Logs",
+                outerCSS: "clickable clickable-color",
+                onclick: `kubectl logs ${pod.metadata.name} ${container.name} -n ${pod.metadata.namespace}`,
+              },
+            ],
           }
         })
       })
     )
 
     const table: Table = {
-      title: 'Container Logs',
+      title: "Container Logs",
       body: containers,
       header: {
-        name: 'TASK',
+        name: "TASK",
         attributes: [
           {
-            key: 'STEP',
-            value: 'STEP'
+            key: "STEP",
+            value: "STEP",
           },
           {
-            key: 'STATUS',
-            value: 'STATUS'
+            key: "STATUS",
+            value: "STATUS",
           },
           {
-            key: 'ACTIONS',
-            value: 'ACTIONS'
-          }
-        ]
-      }
+            key: "ACTIONS",
+            value: "ACTIONS",
+          },
+        ],
+      },
     }
 
     return table
-  }
+  },
 }
 
 export default mode

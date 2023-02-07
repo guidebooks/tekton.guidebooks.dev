@@ -14,40 +14,40 @@
  * limitations under the License.
  */
 
-import Debug from 'debug'
-const debug = Debug('plugins/tekton/preload')
-debug('loading')
+import Debug from "debug"
+const debug = Debug("plugins/tekton/preload")
+debug("loading")
 
-import { Capabilities, ModeFilter, ModeRegistration, PreloadRegistrar } from '@kui-shell/core'
-import { KubeResource } from '@kui-shell/plugin-kubectl'
+import { Capabilities, ModeFilter, ModeRegistration, PreloadRegistrar } from "@kui-shell/core"
+import { KubeResource } from "@kui-shell/plugin-kubectl"
 
-import { isPipeline, isPipelineRun, isTask } from './model/resource'
+import { isPipeline, isPipelineRun, isTask } from "./model/resource"
 
 /** this is the SidecarMode model for the tekton run view */
 // import runMode from './model/modes/run'
 
-declare let __non_webpack_require__ // eslint-disable-line @typescript-eslint/camelcase
-declare let __webpack_require__ // eslint-disable-line @typescript-eslint/camelcase
+declare let __non_webpack_require__ // eslint-disable-line @typescript-eslint/no-unused-vars
+declare let __webpack_require__ // eslint-disable-line @typescript-eslint/no-unused-vars
 
 /**
  * A sidecar mode relevancy filter
  *
  */
 function either(...filters: ModeFilter<KubeResource>[]): ModeFilter<KubeResource> {
-  return (resource: KubeResource) => filters.some(filter => filter(resource))
+  return (resource: KubeResource) => filters.some((filter) => filter(resource))
 }
 
 async function registerModes(registrar: PreloadRegistrar) {
   const [flowMode, traceMode, logsMode] = await Promise.all([
-    import('./model/modes/flow'), // SidecarMode for the tekton flow view
-    import('./model/modes/trace'), // SidecarMode for the tekton trace view
-    import('./model/modes/logs') // SidecarMode for the tekton pipelinerun logs view
+    import("./model/modes/flow"), // SidecarMode for the tekton flow view
+    import("./model/modes/trace"), // SidecarMode for the tekton trace view
+    import("./model/modes/logs"), // SidecarMode for the tekton pipelinerun logs view
   ])
 
   /** sidecar mode for tekton Flow view */
   const flowSpec: ModeRegistration<KubeResource> = {
     mode: flowMode.default,
-    when: either(isPipeline, isPipelineRun, isTask)
+    when: either(isPipeline, isPipelineRun, isTask),
   }
 
   /** sidecar mode for tekton Flow view */
@@ -59,13 +59,13 @@ async function registerModes(registrar: PreloadRegistrar) {
   /** sidecar mode for tekton Flow view */
   const traceSpec = {
     mode: traceMode.default,
-    when: isPipelineRun
+    when: isPipelineRun,
   }
 
   /** sidecar mode for tekton Flow view */
   const logsSpec = {
     mode: logsMode.default,
-    when: isPipelineRun
+    when: isPipelineRun,
   }
 
   registrar.registerModes(flowSpec, traceSpec, logsSpec)
@@ -78,4 +78,4 @@ export default (registrar: PreloadRegistrar) => {
   }
 }
 
-debug('finished loading')
+debug("finished loading")

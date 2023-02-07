@@ -14,54 +14,54 @@
  * limitations under the License.
  */
 
-import { Arguments, Registrar, CodedError } from '@kui-shell/core'
+import { Arguments, Registrar, CodedError } from "@kui-shell/core"
 
-import Options from './options'
-import { fetchTask } from '../../lib/read'
+import Options from "./options"
+import { fetchTask } from "../../lib/read"
 
 const usage = {
-  command: 'step',
-  strict: 'step',
+  command: "step",
+  strict: "step",
   required: [
-    { name: 'pipelineName', docs: 'Name of the enclosing pipeline' },
-    { name: 'taskName', docs: 'Name of the enclosing task' },
-    { name: 'stepName', docs: 'Name of the step' }
+    { name: "pipelineName", docs: "Name of the enclosing pipeline" },
+    { name: "taskName", docs: "Name of the enclosing task" },
+    { name: "stepName", docs: "Name of the step" },
   ],
-  optional: [{ name: '--file', alias: '-f', docs: 'Path to resource specification' }]
+  optional: [{ name: "--file", alias: "-f", docs: "Path to resource specification" }],
 }
 
 const getStep = async ({ tab, argvNoOptions, parsedOptions }: Arguments<Options>) => {
-  const pipelineName = argvNoOptions[argvNoOptions.indexOf('step') + 1]
-  const taskName = argvNoOptions[argvNoOptions.indexOf('step') + 2]
-  const stepName = argvNoOptions[argvNoOptions.indexOf('step') + 3]
+  const pipelineName = argvNoOptions[argvNoOptions.indexOf("step") + 1]
+  const taskName = argvNoOptions[argvNoOptions.indexOf("step") + 2]
+  const stepName = argvNoOptions[argvNoOptions.indexOf("step") + 3]
 
   // either we fetch the model from a given file (given a filepath), or from the cluster
   const task = await fetchTask(tab, pipelineName, taskName, parsedOptions.f)
 
   if (!task) {
-    const err: CodedError = new Error('task not found')
+    const err: CodedError = new Error("task not found")
     err.code = 404
     throw err
   } else {
-    const step = task.spec.steps && task.spec.steps.find(_ => _.name === stepName)
+    const step = task.spec.steps && task.spec.steps.find((_) => _.name === stepName)
     if (!step) {
-      const err: CodedError = new Error('step not found')
+      const err: CodedError = new Error("step not found")
       err.code = 404
       throw err
     } else {
       return {
-        type: 'custom',
+        type: "custom",
         isEntity: true,
-        prettyType: 'step',
+        prettyType: "step",
         name: stepName,
         packageName: taskName,
-        contentType: 'yaml',
-        content: step
+        contentType: "yaml",
+        content: step,
       }
     }
   }
 }
 
 export default (commandTree: Registrar) => {
-  commandTree.listen('/tekton/get/step', getStep, { usage })
+  commandTree.listen("/tekton/get/step", getStep, { usage })
 }

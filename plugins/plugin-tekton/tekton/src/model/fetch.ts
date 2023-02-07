@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { CodedError, Tab } from '@kui-shell/core'
-import { KubeItems, KubeStatus } from '@kui-shell/plugin-kubectl'
-import { PipelineRun, Pipeline, Task } from './resource'
+import { CodedError, Tab } from "@kui-shell/core"
+import { KubeItems, KubeStatus } from "@kui-shell/plugin-kubectl"
+import { PipelineRun, Pipeline, Task } from "./resource"
 
 /**
  * Get the Pipeline referenced by a PipelineRun
@@ -43,6 +43,6 @@ export function getPipelineFromRef(tab: Tab, run: PipelineRun): Promise<Pipeline
 export async function getTasks(tab: Tab): Promise<Task[]> {
   // want Task.tekton.dev rather than Tas, but that is much slower for
   // some reason
-  const list = await tab.REPL.qexec<KubeItems<KubeStatus, Task>>('kubectl get Task -o json')
+  const list = await tab.REPL.qexec<KubeItems<KubeStatus, Task>>("kubectl get Task -o json")
   return list.items
 }

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import Debug from 'debug'
+import Debug from "debug"
 
-import { encodeComponent } from '@kui-shell/core'
-import { KubeResource } from '@kui-shell/plugin-kubectl'
-import { ActivationLike, FlowNode, Edge } from '@kui-shell/plugin-wskflow'
+import { encodeComponent } from "@kui-shell/core"
+import { KubeResource } from "@kui-shell/plugin-kubectl"
+import { ActivationLike, FlowNode, Edge } from "@kui-shell/plugin-wskflow"
 
-import success from './success'
-import { PipelineRun, Pipeline, isPipeline, Task, TaskName, TaskRef, Step, Port } from '../model/resource'
+import success from "./success"
+import { PipelineRun, Pipeline, isPipeline, Task, TaskName, TaskRef, Step, Port } from "../model/resource"
 
-const debug = Debug('plugins/tekton/lib/tekton2graph')
+const debug = Debug("plugins/tekton/lib/tekton2graph")
 
 interface TektonNode extends FlowNode {
   nChildren: number
@@ -48,14 +48,14 @@ const defaultCharWidth = 3.25
  *
  */
 const makeSubGraph = (
-  label = 'root',
+  label = "root",
   {
     visited,
     children,
     tooltip,
     tooltipColor,
     type,
-    onclick
+    onclick,
   }: {
     visited?: number[]
     children: TektonNode[]
@@ -76,7 +76,7 @@ const makeSubGraph = (
     nChildren: 0,
     type,
     tooltip,
-    tooltipColor
+    tooltipColor,
   }
 }
 
@@ -85,31 +85,31 @@ const stepId = (taskRef: TaskRef, step: Step): string => `__step__${taskRef.name
 
 /** find the pipeline in a given set of resource definitions */
 const getPipeline = (jsons: KubeResource[]): Pipeline => {
-  const declaredPipeline = jsons.find(_ => _.kind === 'Pipeline')
+  const declaredPipeline = jsons.find((_) => _.kind === "Pipeline")
 
   if (isPipeline(declaredPipeline)) {
     return declaredPipeline
   } else {
-    const tasks = jsons.filter(_ => _.kind === 'Task')
+    const tasks = jsons.filter((_) => _.kind === "Task")
     if (tasks.length === 0) {
-      throw new Error('No pipeline defined, and no Tasks defined')
+      throw new Error("No pipeline defined, and no Tasks defined")
     } else {
       const pipeline: Pipeline = {
-        apiVersion: 'tekton.dev/v1alpha1',
-        kind: 'Pipeline',
+        apiVersion: "tekton.dev/v1alpha1",
+        kind: "Pipeline",
         metadata: {
-          name: 'pipeline'
+          name: "pipeline",
         },
         originatingCommand: undefined,
         isKubeResource: true,
         spec: {
-          tasks: tasks.map(task => ({
+          tasks: tasks.map((task) => ({
             name: task.metadata.name,
             taskRef: {
-              name: task.metadata.name
-            }
-          }))
-        }
+              name: task.metadata.name,
+            },
+          })),
+        },
       }
 
       return pipeline
@@ -127,7 +127,7 @@ function addEdge(
   child: TektonNode,
   { singletonSource, singletonTarget, hasRuns }: EdgeOptions
 ) {
-  debug('addEdge', parent.id, child.id)
+  debug("addEdge", parent.id, child.id)
 
   if (!parent.ports) {
     parent.ports = []
@@ -136,13 +136,13 @@ function addEdge(
     child.ports = []
   }
 
-  const targetPort = `${child.id}-` + (singletonTarget ? 'pTargetSingleton' : `p${child.ports.length}`)
-  if (!child.ports.find(_ => _.id === targetPort)) {
+  const targetPort = `${child.id}-` + (singletonTarget ? "pTargetSingleton" : `p${child.ports.length}`)
+  if (!child.ports.find((_) => _.id === targetPort)) {
     child.ports.push({ id: targetPort })
   }
 
-  const sourcePort = `${parent.id}-` + (singletonSource ? 'pSourceSingleton' : `p${parent.ports.length}`)
-  if (!parent.ports.find(_ => _.id === sourcePort)) {
+  const sourcePort = `${parent.id}-` + (singletonSource ? "pSourceSingleton" : `p${parent.ports.length}`)
+  if (!parent.ports.find((_) => _.id === sourcePort)) {
     parent.ports.push({ id: sourcePort })
   }
 
@@ -152,7 +152,7 @@ function addEdge(
     sourcePort,
     target: child.id,
     targetPort,
-    visited: !hasRuns ? undefined : !!(parent.visited && child.visited)
+    visited: !hasRuns ? undefined : !!(parent.visited && child.visited),
   })
 
   child.nParents++
@@ -164,14 +164,14 @@ function addEdge(
  * is compatible with the ELK graph layout toolkit.
  *
  */
-export default async function(jsons: KubeResource[], filepath?: string, run?: PipelineRun): Promise<Graph> {
-  debug('jsons', jsons)
+export default async function (jsons: KubeResource[], filepath?: string, run?: PipelineRun): Promise<Graph> {
+  debug("jsons", jsons)
   const pipeline = getPipeline(jsons)
-  debug('pipeline', pipeline)
+  debug("pipeline", pipeline)
 
   // map from Task.metadata.name to Task
   const taskName2Task: SymbolTable<Task> = jsons
-    .filter(_ => _.kind === 'Task')
+    .filter((_) => _.kind === "Task")
     .reduce((symtab: SymbolTable<Task>, task: Task) => {
       symtab[task.metadata.name] = task
       return symtab
@@ -204,9 +204,9 @@ export default async function(jsons: KubeResource[], filepath?: string, run?: Pi
         start: new Date(run.status.startTime).getTime(),
         duration: 0,
         response: {
-          success: true
-        }
-      }
+          success: true,
+        },
+      },
     ]) ||
     []
   const endVisit: ActivationLike[] =
@@ -216,9 +216,9 @@ export default async function(jsons: KubeResource[], filepath?: string, run?: Pi
           start: new Date(run.status.completionTime).getTime(),
           duration: 0,
           response: {
-            success: success(run.status.conditions)
-          }
-        }
+            success: success(run.status.conditions),
+          },
+        },
       ]) ||
     []
   const runInfo: ActivationLike[] =
@@ -236,24 +236,24 @@ export default async function(jsons: KubeResource[], filepath?: string, run?: Pi
           start,
           duration: taskRun.status.completionTime ? new Date(taskRun.status.completionTime).getTime() - start : 0,
           response: {
-            success: success(taskRun.status.conditions)
-          }
+            success: success(taskRun.status.conditions),
+          },
         })
 
-        taskRun.status.steps.forEach(stepRun => {
+        taskRun.status.steps.forEach((stepRun) => {
           const start = new Date(stepRun.terminated.startedAt).getTime()
           const end = new Date(stepRun.terminated.finishedAt).getTime()
-          const success = stepRun.terminated.reason !== 'Error'
+          const success = stepRun.terminated.reason !== "Error"
 
-          const step = task.spec.steps.find(_ => _.name === stepRun.name)
+          const step = task.spec.steps.find((_) => _.name === stepRun.name)
           if (step) {
             step.visitedIdx = M.length
             M.push({
               start,
               duration: end - start,
               response: {
-                success
-              }
+                success,
+              },
             })
           }
         })
@@ -262,8 +262,8 @@ export default async function(jsons: KubeResource[], filepath?: string, run?: Pi
     }, startVisit.concat(endVisit))
 
   const graph: Graph = {
-    id: 'root',
-    label: 'root',
+    id: "root",
+    label: "root",
     edges: [],
     children: [],
     nChildren: 0,
@@ -271,46 +271,46 @@ export default async function(jsons: KubeResource[], filepath?: string, run?: Pi
     runs: runInfo,
     properties: {
       maxLabelLength: 24,
-      fontSize: '4px'
-    }
+      fontSize: "4px",
+    },
   }
 
   const start: TektonNode = {
-    id: 'Entry',
-    label: 'start',
-    type: 'Entry',
+    id: "Entry",
+    label: "start",
+    type: "Entry",
     width: 18,
     height: 18,
     nChildren: 0,
     nParents: 0,
     visited: run && [0], // we carefully placed the start visit record in the first position (above)
     properties: {
-      title: 'The flow starts here',
-      fontSize: '4.5px'
-    }
+      title: "The flow starts here",
+      fontSize: "4.5px",
+    },
   }
   const end: TektonNode = {
-    id: 'Exit',
-    label: 'end',
-    type: 'Exit',
+    id: "Exit",
+    label: "end",
+    type: "Exit",
     width: 18,
     height: 18,
     nChildren: 0,
     nParents: 0,
     visited: run && [1], // we carefully placed the end visit record in the second position (above)
     properties: {
-      title: 'The flow ends here',
-      fontSize: '4.5px'
-    }
+      title: "The flow ends here",
+      fontSize: "4.5px",
+    },
   }
 
   const symbolTable: SymbolTable<TektonNode> = pipeline.spec.tasks.reduce(
     (symtab: SymbolTable<TektonNode>, taskRef: TaskRef) => {
       const task: Task = taskName2Task[taskRef.taskRef.name]
-      debug('TaskRef', taskRef.name, task)
+      debug("TaskRef", taskRef.name, task)
 
       // -f file argument for drilldowns, if we have one
-      const filearg = filepath ? `-f ${encodeComponent(filepath)}` : ''
+      const filearg = filepath ? `-f ${encodeComponent(filepath)}` : ""
 
       let node: TektonNode
       if (task && task.spec.steps && task.spec.steps.length > 0) {
@@ -319,20 +319,22 @@ export default async function(jsons: KubeResource[], filepath?: string, run?: Pi
         // includes Steps; we will make a subgraph for the steps
         //
         const resources = (task.spec.inputs && task.spec.inputs.resources) || []
-        const resourceList = `${resources.map(_ => `<span class='color-base0A'>${_.type}</span>:${_.name}`).join(', ')}`
+        const resourceList = `${resources
+          .map((_) => `<span class='color-base0A'>${_.type}</span>:${_.name}`)
+          .join(", ")}`
 
         const params = (task.spec.inputs && task.spec.inputs.params) || []
-        const paramList = `(${params.map(_ => _.name).join(', ')})`
+        const paramList = `(${params.map((_) => _.name).join(", ")})`
 
         const subgraph = makeSubGraph(taskRef.name, {
-          type: 'Tekton Task',
+          type: "Tekton Task",
           tooltip: `<table><tr><td><strong>Resources</strong></td><td>${resourceList}</td></tr><tr><td><strong>Params</strong></td><td>${paramList}</td></tr></table>`,
-          tooltipColor: '0C',
+          tooltipColor: "0C",
           onclick: `tekton get task ${encodeComponent(pipeline.metadata.name)} ${encodeComponent(
             task.metadata.name
           )} ${filearg}`,
           visited: task.visitedIdx !== undefined ? [task.visitedIdx] : undefined,
-          children: task.spec.steps.map(step => {
+          children: task.spec.steps.map((step) => {
             const stepNode: TektonNode = {
               id: stepId(taskRef, step),
               label: step.name,
@@ -342,17 +344,17 @@ export default async function(jsons: KubeResource[], filepath?: string, run?: Pi
               nParents: 0,
               deployed: true,
               visited: step.visitedIdx !== undefined ? [step.visitedIdx] : undefined,
-              type: 'Tekton Step',
+              type: "Tekton Step",
               tooltip: `<strong>Image</strong>: ${step.image}`,
-              tooltipColor: '0E',
+              tooltipColor: "0E",
               onclick: `tekton get step ${encodeComponent(pipeline.metadata.name)} ${encodeComponent(
                 task.metadata.name
-              )} ${encodeComponent(step.name)} ${filearg}`
+              )} ${encodeComponent(step.name)} ${filearg}`,
             }
 
             symtab[stepNode.id] = stepNode
             return stepNode
-          })
+          }),
         })
 
         subgraph.children.slice(1).reduce((cur: TektonNode, next: TektonNode) => {
@@ -374,8 +376,8 @@ export default async function(jsons: KubeResource[], filepath?: string, run?: Pi
           height: defaultHeight,
           nChildren: 0,
           nParents: 0,
-          type: 'Tekton Task',
-          tooltip: 'test'
+          type: "Tekton Task",
+          tooltip: "test",
         }
       }
 
@@ -409,7 +411,7 @@ export default async function(jsons: KubeResource[], filepath?: string, run?: Pi
       addEdge(graph, lastStepOfParentTask, firstStepOfChildTask, {
         singletonSource: true,
         singletonTarget: true,
-        hasRuns: runs !== undefined
+        hasRuns: runs !== undefined,
       })
       parent.nChildren++
       child.nParents++
@@ -417,14 +419,14 @@ export default async function(jsons: KubeResource[], filepath?: string, run?: Pi
       addEdge(graph, parent, firstStepOfChildTask, {
         singletonSource: opts.singletonSource || false,
         singletonTarget: true,
-        hasRuns: runs !== undefined
+        hasRuns: runs !== undefined,
       })
       child.nParents++
     } else if (lastStepOfParentTask && !firstStepOfChildTask) {
       addEdge(graph, lastStepOfParentTask, child, {
         singletonSource: true,
         singletonTarget: opts.singletonTarget || false,
-        hasRuns: runs !== undefined
+        hasRuns: runs !== undefined,
       })
       parent.nChildren++
     } else {
@@ -444,13 +446,13 @@ export default async function(jsons: KubeResource[], filepath?: string, run?: Pi
     if (parent) {
       _addEdge(parent, child)
     } else {
-      console.error('parent not found', childTaskRef)
+      console.error("parent not found", childTaskRef)
     }
   }
 
   pipeline.spec.tasks.forEach((task: TaskRef) => {
     if (task.runAfter) {
-      task.runAfter.forEach(parentTaskName => {
+      task.runAfter.forEach((parentTaskName) => {
         wire(parentTaskName, task)
       })
     }
@@ -458,9 +460,9 @@ export default async function(jsons: KubeResource[], filepath?: string, run?: Pi
     if (task.resources) {
       const wirePorts = (ports?: Port[]) => {
         if (ports) {
-          ports.forEach(port => {
+          ports.forEach((port) => {
             if (port.from) {
-              port.from.forEach(parentTaskName => {
+              port.from.forEach((parentTaskName) => {
                 wire(parentTaskName, task)
               })
             }
@@ -475,21 +477,21 @@ export default async function(jsons: KubeResource[], filepath?: string, run?: Pi
 
   // link start node
   graph.children
-    .filter(child => child.nParents === 0)
-    .forEach(child =>
+    .filter((child) => child.nParents === 0)
+    .forEach((child) =>
       _addEdge(start, child, {
         singletonSource: true,
-        hasRuns: graph.runs !== undefined
+        hasRuns: graph.runs !== undefined,
       })
     )
 
   // link end node
   graph.children
-    .filter(parent => parent.nChildren === 0)
-    .forEach(parent =>
+    .filter((parent) => parent.nChildren === 0)
+    .forEach((parent) =>
       _addEdge(parent, end, {
         singletonTarget: true,
-        hasRuns: graph.runs !== undefined
+        hasRuns: graph.runs !== undefined,
       })
     )
 

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-import Debug from 'debug'
+import Debug from "debug"
 
-import { Tab } from '@kui-shell/core'
+import { Tab } from "@kui-shell/core"
 
-import { FlowNode } from './graph'
-import ActivationLike from './activation'
+import { FlowNode } from "./graph"
+import ActivationLike from "./activation"
 
-const debug = Debug('plugins/wskflow/subtext')
+const debug = Debug("plugins/wskflow/subtext")
 
 /**
  * Render deployment status of graph nodes
  *
  */
-export default async function(
+export default async function (
   tab: Tab,
   actions: Record<string, string[]>,
   activations: ActivationLike[],
@@ -36,14 +36,14 @@ export default async function(
 ): Promise<HTMLElement> {
   try {
     if (actions) {
-      debug('actions', actions)
+      debug("actions", actions)
       const array = []
       const names = Object.keys(actions)
-      names.forEach(name => {
+      names.forEach((name) => {
         array.push(tab.REPL.qexec(`wsk action get "${name}"`))
       })
 
-      const result = await Promise.all(array.map(p => p.catch(e => e)))
+      const result = await Promise.all(array.map((p) => p.catch((e) => e)))
 
       const notDeployed = []
 
@@ -55,16 +55,16 @@ export default async function(
       }
 
       result.forEach((r, index) => {
-        if (r.kind === 'Action' && r.metadata.name) {
+        if (r.kind === "Action" && r.metadata.name) {
           debug(`action ${r.metadata.name} is deployed`)
-          actions[names[index]].forEach(id => {
+          actions[names[index]].forEach((id) => {
             graphChildrenStatus(graphData.children, id, true)
           })
         } else {
           debug(`action ${names[index]} is not deployed`, r, names)
           if (actions[names[index]]) {
             notDeployed.push(names[index])
-            actions[names[index]].forEach(id => {
+            actions[names[index]].forEach((id) => {
               graphChildrenStatus(graphData.children, id, false)
             })
           }
@@ -76,32 +76,32 @@ export default async function(
         if (!options || !options.noHeader) {
           // UI.empty(container)
           const css = {
-            message: 'wskflow-undeployed-action-warning',
-            text: 'wskflow-undeployed-action-warning-text',
-            examples: 'wskflow-undeployed-action-warning-examples',
-            examplesExtra: ['deemphasize', 'deemphasize-partial', 'left-pad']
+            message: "wskflow-undeployed-action-warning",
+            text: "wskflow-undeployed-action-warning-text",
+            examples: "wskflow-undeployed-action-warning-examples",
+            examplesExtra: ["deemphasize", "deemphasize-partial", "left-pad"],
           }
 
-          const message = document.createElement('div')
-          const warning = document.createElement('strong')
+          const message = document.createElement("div")
+          const warning = document.createElement("strong")
 
-          const text = document.createElement('span')
-          const examples = document.createElement('span')
+          const text = document.createElement("span")
+          const examples = document.createElement("span")
 
           message.className = css.message
           text.className = css.text
-          warning.className = 'red-text'
+          warning.className = "red-text"
           examples.className = css.examples
-          css.examplesExtra.forEach(_ => examples.classList.add(_))
+          css.examplesExtra.forEach((_) => examples.classList.add(_))
 
           message.appendChild(warning)
           message.appendChild(text)
           message.appendChild(examples)
           // container.appendChild(message)
 
-          warning.innerText = 'Warning: '
+          warning.innerText = "Warning: "
 
-          const actionStr = notDeployed.length === 1 ? 'component' : 'components'
+          const actionStr = notDeployed.length === 1 ? "component" : "components"
           text.innerText = `depends on ${notDeployed.length} undeployed ${actionStr}`
 
           /* const pre = notDeployed.length > 2 ? 'e.g. ' : ''
@@ -114,6 +114,6 @@ export default async function(
       }
     }
   } catch (err) {
-    debug('action get fetching error: ', err)
+    debug("action get fetching error: ", err)
   }
 }

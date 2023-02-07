@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import Debug from 'debug'
-const debug = Debug('plugins/wskflow/init')
-debug('loading')
+import Debug from "debug"
+const debug = Debug("plugins/wskflow/init")
+debug("loading")
 
-import visualize from './lib/visualize'
+import visualize from "./lib/visualize"
 
 export default async () => {
-  debug('initializing')
+  debug("initializing")
 
   try {
     // the require of lib/visualize may fail in headless mode; that's ok!
@@ -34,17 +34,17 @@ export default async () => {
        * [optional] w & h: canvas width and height. data: activation data
        *
        */
-      visualize
+      visualize,
     }
   } catch (err) {
     console.error(err)
 
     return {
       visualize: () => {
-        throw new Error('Unsupported operation')
-      }
+        throw new Error("Unsupported operation")
+      },
     }
   }
 }
 
-debug('finished loading')
+debug("finished loading")

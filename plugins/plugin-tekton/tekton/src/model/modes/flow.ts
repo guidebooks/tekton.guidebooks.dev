@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { ResourceWithMetadata, Mode, Tab, i18n } from '@kui-shell/core'
-import { KubeResource, isKubeResource } from '@kui-shell/plugin-kubectl'
+import { ResourceWithMetadata, Mode, Tab, i18n } from "@kui-shell/core"
+import { KubeResource, isKubeResource } from "@kui-shell/plugin-kubectl"
 
-import flowView from '../../view/flow'
-import { getPipelineFromRef, getTasks } from '../fetch'
-import { isPipelineRun, isPipeline } from '../resource'
+import flowView from "../../view/flow"
+import { getPipelineFromRef, getTasks } from "../fetch"
+import { isPipelineRun, isPipeline } from "../resource"
 
-const strings = i18n('plugin-kubectl', 'tekton')
+const strings = i18n("plugin-kubectl", "tekton")
 
 export type ResponseObject =
   | KubeResource
@@ -36,8 +36,8 @@ export type ResponseObject =
  *
  */
 const flowMode: Mode = {
-  mode: 'flow',
-  label: strings('flow'),
+  mode: "flow",
+  label: strings("flow"),
   content: async (tab: Tab, resource: ResponseObject) => {
     if (isKubeResource(resource)) {
       if (isPipelineRun(resource)) {
@@ -53,10 +53,10 @@ const flowMode: Mode = {
       }
     } else {
       // then resource is already the response we need
-      return { content: (resource.content as any) as HTMLElement }
+      return { content: resource.content as any as HTMLElement }
     }
   },
-  defaultMode: true
+  defaultMode: true,
 }
 
 export default flowMode

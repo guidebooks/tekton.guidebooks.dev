@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import Debug from 'debug'
+import Debug from "debug"
 
-import { Tab, Mode } from '@kui-shell/core'
+import { Tab, Mode } from "@kui-shell/core"
 
-const debug = Debug('plugins/wskflow/util')
+const debug = Debug("plugins/wskflow/util")
 
 const strings = {
-  '1:1': 'Zoom 1:1',
-  Fit: 'Zoom to Fit'
+  "1:1": "Zoom 1:1",
+  Fit: "Zoom to Fit",
 }
 
 /**
@@ -54,7 +54,7 @@ export const textualPropertiesOfCode = (code: string): TextualProperties => {
  * @return { view, controller } where controller is the API exported by graph2doms
  */
 export const wskflow = async (tab: Tab, visualize, { ast, viewOptions, container }) => {
-  debug('wskflow', viewOptions)
+  debug("wskflow", viewOptions)
 
   const isPartOfRule = false
   /* const isPartOfRule = await tab.REPL.qexec<{ action: { name: string; path: string } }[]>('wsk rule list')
@@ -75,45 +75,45 @@ export const wskflow = async (tab: Tab, visualize, { ast, viewOptions, container
  * @param visibleWhenShowing only show the zoom buttons when the given mode is active
  *
  */
-export const zoomToFitButtons = (controller, { visibleWhenShowing = 'visualization' } = {}): Mode[] => {
+export const zoomToFitButtons = (controller, { visibleWhenShowing = "visualization" } = {}): Mode[] => {
   if (controller && controller.register) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const events = require('events')
+    const events = require("events")
     const zoom1to1Bus = new events.EventEmitter()
     const zoomToFitBus = new events.EventEmitter()
 
-    const listener = event => {
-      zoom1to1Bus.emit('change', event.applyAutoScale === false && !event.customZoom)
-      zoomToFitBus.emit('change', event.applyAutoScale === true && !event.customZoom)
+    const listener = (event) => {
+      zoom1to1Bus.emit("change", event.applyAutoScale === false && !event.customZoom)
+      zoomToFitBus.emit("change", event.applyAutoScale === true && !event.customZoom)
     }
 
     controller.register(listener)
 
     return [
       {
-        mode: 'zoom-one-to-one',
-        label: strings['1:1'],
-        balloon: 'Use a fixed-size canvas',
+        mode: "zoom-one-to-one",
+        label: strings["1:1"],
+        balloon: "Use a fixed-size canvas",
         selected: controller.is1to1(),
         // selectionController: zoom1to1Bus,
         visibleWhen: visibleWhenShowing,
-        kind: 'view',
+        kind: "view",
         command: () => {
           controller.zoom1to1()
-        }
+        },
       },
       {
-        mode: 'zoom-to-fit',
-        label: strings['Fit'],
-        balloon: 'Use a zoom to fit canvas',
+        mode: "zoom-to-fit",
+        label: strings["Fit"],
+        balloon: "Use a zoom to fit canvas",
         selected: !controller.is1to1(),
         // selectionController: zoomToFitBus,
         visibleWhen: visibleWhenShowing,
-        kind: 'view',
+        kind: "view",
         command: () => {
           controller.zoomToFit()
-        }
-      }
+        },
+      },
     ]
   } else {
     // probably some error initializing wskflow; try to safeguard against that

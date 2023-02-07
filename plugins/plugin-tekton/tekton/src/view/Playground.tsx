@@ -108,6 +108,8 @@ export default class Playground extends PureComponent<Props, State> {
       // we don't have the markdown source yet, so listen on the given
       // channel for that source
       onCommentaryEdit(this.props.source, this._onEdit)
+    } else {
+      this.parse(this.state.input)
     }
   }
 
@@ -143,4 +145,22 @@ export function listenOnChannel(args: Arguments<Options>) {
   }
 
   return <Playground source={channel} tab={args.tab} />
+}
+
+/** Open a Playground for the source in the given `filepath` */
+export async function readFromFile(args: Arguments<Options>) {
+  const filepath = args.argvNoOptions[3]
+  if (!filepath) {
+    throw new Error("Usage: madwizard playground file <filepath>")
+  }
+
+  const { loadNotebook } = await import("@kui-shell/plugin-client-common/notebook")
+  const input = await loadNotebook(filepath, args)
+
+  if (typeof input !== "string") {
+    throw new Error("Invalid file format")
+  }
+
+  const source: Source = { input, filepath }
+  return <Playground source={source} tab={args.tab} />
 }

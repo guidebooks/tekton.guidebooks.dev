@@ -1,7 +1,11 @@
 {
   "label": "madwizard",
   "submenu": [
-    { "notebook": "Welcome", "filepath": "/kui/client/welcome.md" },
+    { "notebook": "Welcomefoo", "filepath": "/kui/client/welcome.md" },
+    {
+      "label": "Pipelines",
+      "submenu": [{ "notebook": "Big Example", "filepath": "/kui/client/big.md" }]
+    },
     {
       "label": "Playgrounds",
       "submenu": [{ "notebook": "Visualize a Pipeline", "filepath": "/kui/client/playground.md" }]

@@ -23,7 +23,7 @@ import preview from "./controller/preview"
 export default async (registrar: Registrar) => {
   /**
    * Playground that listens for edits on the provided channel
-   *    madwizard playground <channel>
+   *    tekton playground <channel>
    *
    */
   registrar.listen(
@@ -31,6 +31,20 @@ export default async (registrar: Registrar) => {
     async (args) => import("./view/Playground").then(async (_) => ({ react: await _.listenOnChannel(args) })),
     {
       needsUI: true,
+    }
+  )
+
+  /**
+   * Playground for a given filepath
+   *    tekton playground file <filepath>
+   *
+   */
+  registrar.listen(
+    "/tekton/playground/file",
+    async (args) => import("./view/Playground").then(async (_) => ({ react: await _.readFromFile(args) })),
+    {
+      needsUI: true,
+      outputOnly: true,
     }
   )
 

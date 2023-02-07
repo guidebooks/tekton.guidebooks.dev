@@ -1,14 +1,14 @@
 {
-  "label": "madwizard",
   "submenu": [
-    { "notebook": "Welcomefoo", "filepath": "/kui/client/welcome.md" },
+    { "notebook": "Welcome", "filepath": "/kui/client/welcome.md" },
     {
       "label": "Pipelines",
-      "submenu": [{ "notebook": "Big Example", "filepath": "/kui/client/big.md" }]
+      "submenu": [
+        { "notebook": "Build container", "filepath": "/kui/client/build-push.md" },
+        { "notebook": "Build and Deploy", "filepath": "/kui/client/leeroy2.md" },
+        { "notebook": "Multi-target", "filepath": "/kui/client/leeroy.md" }
+      ]
     },
-    {
-      "label": "Playgrounds",
-      "submenu": [{ "notebook": "Visualize a Pipeline", "filepath": "/kui/client/playground.md" }]
-    }
+    { "notebook": "Pipeline Playground", "filepath": "/kui/client/playground.md" }
   ]
 }

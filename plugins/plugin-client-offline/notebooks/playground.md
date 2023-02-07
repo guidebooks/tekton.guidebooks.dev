@@ -8,24 +8,14 @@ layout:
         maximized: true
 ---
 
-=== "Hello"
+=== "YAML Specification"
     ```bash
     ---
     execute: now
     maximize: true
     outputOnly: true
     ---
-    commentary --send pg1 -f /kui/client/playground/hello.md
-    ```
-
-=== "RunAfter"
-    ```bash
-    ---
-    execute: now
-    maximize: true
-    outputOnly: true
-    ---
-    commentary --send pg1 -f /kui/client/playground/runafter.md
+    commentary --send pg1 -f /kui/client/playground/runafter.yaml
     ```
 
 ---

@@ -34,12 +34,12 @@
   "module": "mdist/index.js",
   "types": "mdist/index.d.ts",
   "dependencies": {
-    "d3": "3.5.17",
-    "debug": "4.3.2",
+    "d3": "^3.5.17",
+    "debug": "^4.3.4",
     "elkjs": "0.3.0",
-    "es6-promise-pool": "2.5.0",
-    "jquery": "3.6.0",
-    "tmp": "0.2.1"
+    "es6-promise-pool": "^2.5.0",
+    "jquery": "^3.6.3",
+    "tmp": "^0.2.1"
   },
   "kui": {
     "headless": false,

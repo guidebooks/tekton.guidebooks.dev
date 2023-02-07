@@ -14,6 +14,6 @@ execute: now
 outputOnly: true
 maximize: true
 ---
-tekton playground file /kui/client/playground/big.yaml
+tekton playground file /kui/client/playground/build-push.yaml
 ```
 

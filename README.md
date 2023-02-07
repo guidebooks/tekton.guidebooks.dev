@@ -1,18 +1,11 @@
-# madwizard.io Web Site
-
-This repository houses the logic for the web site
-[https://madwizard.io](https://madwizard.io). It showcases
-[`madwizard`](https://github.com/guidebooks/madwizard), which is a way
-to automate turning markdown source into a wizard user experience.
+# Tekton Static Web App
 
 This repo uses the [Kui](https://github.com/kubernetes-sigs/kui)
-project to generate a static single page web app. Kui includes a
-plugin that visualizes the `madwizard` wizard experience.
+project to generate a static single page web app.
 
-## Using this repo as a template
+## Development
 
-You may use this repo as a starting point for crafting your own
-(similar) site. After cloning, start the watcher:
+After cloning, start the watcher:
 
 ```shell
 npm run watch
@@ -23,10 +16,6 @@ then visit [http://localhost:9080](http://localhost:9080). We use
 tests via `npm test`.
 
 ### Production Builds
-
-This repository uses a [GitHub Actions
-workflow](.github/workflows/deploy) to build the webpack bundles and
-deploy them to a site managed by GitHub Pages.
 
 If you want to build the bundles manually, use `npm run build`, and
 look in `dist/webpack` for the index.html, etc.

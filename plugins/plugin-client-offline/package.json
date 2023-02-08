@@ -7,13 +7,13 @@
   "types": "mdist/index.d.ts",
   "license": "Apache-2.0",
   "author": "Mengting Yan",
-  "homepage": "https://github.com/guidebooks/madwizard.io",
+  "homepage": "https://github.com/guidebooks/tekton.guidebooks.dev",
   "bugs": {
-    "url": "https://github.com/guidebooks/madwizard.io/issues/new"
+    "url": "https://github.com/guidebooks/tekton.guidebooks.dev/issues/new"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/guidebooks/madwizard.io.git"
+    "url": "git+https://github.com/guidebooks/tekton.guidebooks.dev.git"
   },
   "keywords": [
     "kui",

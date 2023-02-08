@@ -17,7 +17,7 @@
 import Debug from "debug"
 import prettyPrintDuration from "pretty-ms"
 
-import { KubeResource } from "@kui-shell/plugin-kubectl"
+import { KubeResource } from "@kui-shell/plugin-kubectl-core"
 import { Badge, Mode, Tab, empty, Util, i18n } from "@kui-shell/core"
 import { ActivationLikeFull as ActivationLike } from "@kui-shell/plugin-wskflow"
 

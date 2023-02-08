@@ -15,11 +15,9 @@
  */
 
 import Debug from "debug"
-
 import { basename, dirname } from "path"
-
 import { Tab, Mode, Badge, Presentation } from "@kui-shell/core"
-import { KubeResource, TrafficLight } from "@kui-shell/plugin-kubectl"
+import { KubeResource, TrafficLight } from "@kui-shell/plugin-kubectl-core"
 
 import runMode from "../model/modes/run"
 import flowMode from "../model/modes/flow"

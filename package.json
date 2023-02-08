@@ -61,9 +61,9 @@
     "printWidth": 120
   },
   "devDependencies": {
-    "@kui-shell/builder": "13.0.0-dev-20230207-200837",
-    "@kui-shell/react": "13.0.0-dev-20230207-200837",
-    "@kui-shell/webpack": "13.0.0-dev-20230207-200837",
+    "@kui-shell/builder": "13.0.0-dev-20230208-122823",
+    "@kui-shell/react": "13.0.0-dev-20230208-122823",
+    "@kui-shell/webpack": "13.0.0-dev-20230208-122823",
     "@playwright/test": "^1.30.0",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
@@ -78,14 +78,14 @@
   },
   "dependencies": {
     "@kui-shell/client": "file:./plugins/plugin-client-offline",
-    "@kui-shell/core": "13.0.0-dev-20230207-200837",
-    "@kui-shell/plugin-bash-like": "13.0.0-dev-20230207-200837",
-    "@kui-shell/plugin-carbon-themes": "13.0.0-dev-20230207-200837",
-    "@kui-shell/plugin-client-common": "13.0.0-dev-20230207-200837",
-    "@kui-shell/plugin-core-support": "13.0.0-dev-20230207-200837",
-    "@kui-shell/plugin-madwizard": "13.0.0-dev-20230207-200837",
-    "@kui-shell/plugin-patternfly4-themes": "13.0.0-dev-20230207-200837",
-    "@kui-shell/plugin-kubectl": "13.0.0-dev-20230207-200837",
+    "@kui-shell/core": "13.0.0-dev-20230208-122823",
+    "@kui-shell/plugin-bash-like": "13.0.0-dev-20230208-122823",
+    "@kui-shell/plugin-carbon-themes": "13.0.0-dev-20230208-122823",
+    "@kui-shell/plugin-client-common": "13.0.0-dev-20230208-122823",
+    "@kui-shell/plugin-core-support": "13.0.0-dev-20230208-122823",
+    "@kui-shell/plugin-madwizard": "13.0.0-dev-20230208-122823",
+    "@kui-shell/plugin-patternfly4-themes": "13.0.0-dev-20230208-122823",
+    "@kui-shell/plugin-kubectl-core": "13.0.0-dev-20230208-122823",
     "@kui-shell/plugin-tekton": "./plugins/plugin-tekton",
     "@kui-shell/plugin-wskflow": "./plugins/plugin-wskflow"
   }

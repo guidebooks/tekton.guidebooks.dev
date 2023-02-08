@@ -15,7 +15,7 @@
  */
 
 import { ResourceWithMetadata, Mode, Tab, i18n } from "@kui-shell/core"
-import { KubeResource, isKubeResource } from "@kui-shell/plugin-kubectl"
+import { KubeResource, isKubeResource } from "@kui-shell/plugin-kubectl-core"
 
 import flowView from "../../view/flow"
 import { getPipelineFromRef, getTasks } from "../fetch"

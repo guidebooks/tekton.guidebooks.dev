@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-import Debug from "debug"
-const debug = Debug("plugins/tekton/preload")
-debug("loading")
-
+import { KubeResource } from "@kui-shell/plugin-kubectl-core"
 import { Capabilities, ModeFilter, ModeRegistration, PreloadRegistrar } from "@kui-shell/core"
-import { KubeResource } from "@kui-shell/plugin-kubectl"
 
 import { isPipeline, isPipelineRun, isTask } from "./model/resource"
 
@@ -77,5 +73,3 @@ export default (registrar: PreloadRegistrar) => {
     return registerModes(registrar)
   }
 }
-
-debug("finished loading")

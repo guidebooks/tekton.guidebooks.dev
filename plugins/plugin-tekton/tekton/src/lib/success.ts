@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { KubeStatusCondition } from "@kui-shell/plugin-kubectl"
+import { KubeStatusCondition } from "@kui-shell/plugin-kubectl-core"
 
 /**
  * Determine the success bit of a run element

@@ -15,7 +15,7 @@
  */
 
 import { Mode, Tab } from "@kui-shell/core"
-import { isKubeResource } from "@kui-shell/plugin-kubectl"
+import { isKubeResource } from "@kui-shell/plugin-kubectl-core"
 import { ResponseObject } from "./flow"
 
 /**

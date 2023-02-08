@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { KubeResource, KubeStatusCondition, KubeStatus } from "@kui-shell/plugin-kubectl"
+import { KubeResource, KubeStatusCondition, KubeStatus } from "@kui-shell/plugin-kubectl-core"
 
 /** this is the api version matcher; TODO refactor */
 const tektonAPI = /tekton.dev/

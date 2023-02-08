@@ -17,7 +17,7 @@
 import Debug from "debug"
 
 import { encodeComponent } from "@kui-shell/core"
-import { KubeResource } from "@kui-shell/plugin-kubectl"
+import { KubeResource } from "@kui-shell/plugin-kubectl-core"
 import { ActivationLike, FlowNode, Edge } from "@kui-shell/plugin-wskflow"
 
 import success from "./success"

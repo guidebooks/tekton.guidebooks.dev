@@ -15,7 +15,7 @@
  */
 
 import { CodedError, Tab } from "@kui-shell/core"
-import { KubeItems, KubeStatus } from "@kui-shell/plugin-kubectl"
+import { KubeItems, KubeStatus } from "@kui-shell/plugin-kubectl-core"
 import { PipelineRun, Pipeline, Task } from "./resource"
 
 /**

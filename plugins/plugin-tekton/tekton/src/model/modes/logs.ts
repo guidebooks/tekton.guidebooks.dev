@@ -15,7 +15,7 @@
  */
 
 import { Row, Table, Mode, Tab, Util, i18n } from "@kui-shell/core"
-import { KubeItems, KubeStatus, Pod } from "@kui-shell/plugin-kubectl"
+import { KubeItems, KubeStatus, Pod } from "@kui-shell/plugin-kubectl-core"
 import { PipelineRun, TaskRun } from "../resource"
 
 const strings = i18n("plugin-kubectl", "tekton")
